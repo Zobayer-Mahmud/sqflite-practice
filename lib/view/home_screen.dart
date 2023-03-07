@@ -111,7 +111,12 @@ Future<void>  updatItem({required int id})async{
 
             refreshJournals();
           },
-          child: ListView.builder(itemBuilder: itemBuilder)),
+          child: ListView.builder(
+            
+            itemCount: journal.length,
+            itemBuilder: (contextcontext, index) { return Card(color: Colors.orange[200],margin: EdgeInsets.all(15),
+            child: ListTile(title: Text(journal[index]['title']),
+            subtitle: Text(journal[index]['title']),),);} )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {showForm();},
         backgroundColor: Colors.purple,
