@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -31,6 +32,15 @@ static Future<List<Map<String,dynamic>>> getItemByID( int id) async {
   final db = await SqlHelper.db();
   return db.query('items',where: 'id = ?', whereArgs: [id],limit: 1);
 }
+static Future <int> updateItem({required int id, required String title, String? description})async{
+  final db = await SqlHelper.db();
+  final data = {'title':title,'description':description,'createAt': DateTime.now().toString()};
+
+  final result = await db.update('items', data,where: "id =?",whereArgs: [id]);
+  return result;
+}
+
+
 
 
 
