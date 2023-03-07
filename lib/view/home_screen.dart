@@ -22,8 +22,15 @@ class _HomeScreenState extends State<HomeScreen> {
     journal = data;
     isLoading = false;
     print(">>> Number of items in list ${journal.length}");
-  }addItem(){}
-  updatItem(){}
+  }
+  
+ Future<void>  addItem()async{
+await SqlHelper.createItems(title : textController.text,description: descriptionController.text);
+refreshJournals();
+  }
+Future<void>  updatItem({required int id})async{
+  await SqlHelper.updateItem(id: id, title: textController.text,description: descriptionController.text);
+}
 
   void showForm({int? id}) async {
     if (id != null) {
@@ -61,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           
               onTap:()async{ 
                 
-                id== null ? await addItem():updatItem(); 
+                id== null ? await addItem(): await updatItem(id: 1); 
                     Navigator.pop(context);} ,
               child: Center(
                 child: Container(
@@ -104,10 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             refreshJournals();
           },
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-         
-          )),
+          child: ListView.builder(itemBuilder: itemBuilder)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {showForm();},
         backgroundColor: Colors.purple,
