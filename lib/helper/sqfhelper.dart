@@ -27,5 +27,11 @@ static Future<List<Map<String,dynamic>>> getItems() async {
   final db = await SqlHelper.db();
   return db.query('items',orderBy: 'id');
 }
+static Future<List<Map<String,dynamic>>> getItemByID( int id) async {
+  final db = await SqlHelper.db();
+  return db.query('items',where: 'id = ?', whereArgs: [id],limit: 1);
+}
+
+
 
 }
