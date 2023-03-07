@@ -17,31 +17,48 @@ class SqlHelper {
       await createTables(database);
     });
   }
-static Future<int> createItems({required String title, String? description})async{
-  final db = await SqlHelper.db();
-  final data  =  {'title': title, "description": description};
-  final id = await db.insert('items', data,conflictAlgorithm: sql.ConflictAlgorithm.replace);
-  return id;
-}
 
-static Future<List<Map<String,dynamic>>> getItems() async {
-  final db = await SqlHelper.db();
-  return db.query('items',orderBy: 'id');
-}
-static Future<List<Map<String,dynamic>>> getItemByID( int id) async {
-  final db = await SqlHelper.db();
-  return db.query('items',where: 'id = ?', whereArgs: [id],limit: 1);
-}
-static Future <int> updateItem({required int id, required String title, String? description})async{
-  final db = await SqlHelper.db();
-  final data = {'title':title,'description':description,'createAt': DateTime.now().toString()};
+  static Future<int> createItems(
+      {required String title, String? description}) async {
+    final db = await SqlHelper.db();
+    final data = {'title': title, "description": description};
+    final id = await db.insert('items', data,
+        conflictAlgorithm: sql.ConflictAlgorithm.replace);
+    return id;
+  }
 
-  final result = await db.update('items', data,where: "id =?",whereArgs: [id]);
-  return result;
-}
+  static Future<List<Map<String, dynamic>>> getItems() async {
+    final db = await SqlHelper.db();
+    return db.query('items', orderBy: 'id');
+  }
 
+  static Future<List<Map<String, dynamic>>> getItemByID(int id) async {
+    final db = await SqlHelper.db();
+    return db.query('items', where: 'id = ?', whereArgs: [id], limit: 1);
+  }
 
+  static Future<int> updateItem(
+      {required int id, required String title, String? description}) async {
+    final db = await SqlHelper.db();
+    final data = {
+      'title': title,
+      'description': description,
+      'createAt': DateTime.now().toString()
+    };
 
+    final result =
+        await db.update('items', data, where: "id =?", whereArgs: [id]);
+    return result;
+  }
 
-
+  static Future<void> deleteItem({required int id}) async {
+    final db = await SqlHelper.db();
+    try {
+      await db.delete('items', where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Something went wrong when deleting an item $e");
+      }
+    }
+  }
 }
