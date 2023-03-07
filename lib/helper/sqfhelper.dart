@@ -1,4 +1,6 @@
 
+// ignore_for_file: avoid_print
+
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -14,6 +16,7 @@ class SqlHelper {
   static Future<sql.Database> db() async {
     return sql.openDatabase('local.db', version: 1,
         onCreate: (sql.Database database, int version) async {
+          print("Creating a table");
       await createTables(database);
     });
   }
@@ -28,17 +31,20 @@ class SqlHelper {
   }
 
   static Future<List<Map<String, dynamic>>> getItems() async {
+    print("Gets a table");
     final db = await SqlHelper.db();
     return db.query('items', orderBy: 'id');
   }
 
   static Future<List<Map<String, dynamic>>> getItemByID(int id) async {
+    print("Gets an item in a table");
     final db = await SqlHelper.db();
     return db.query('items', where: 'id = ?', whereArgs: [id], limit: 1);
   }
 
   static Future<int> updateItem(
       {required int id, required String title, String? description}) async {
+        print("Update a table");
     final db = await SqlHelper.db();
     final data = {
       'title': title,
@@ -53,6 +59,9 @@ class SqlHelper {
 
   static Future<void> deleteItem({required int id}) async {
     final db = await SqlHelper.db();
+    if (kDebugMode) {
+      print("Delete an item in a table");
+    }
     try {
       await db.delete('items', where: 'id = ?', whereArgs: [id]);
     } catch (e) {
