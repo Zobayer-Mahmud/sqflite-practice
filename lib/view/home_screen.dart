@@ -36,16 +36,19 @@ class _HomeScreenState extends State<HomeScreen> {
     await SqlHelper.updateItem(
         id: id,
         title: textController.text,
-        description: descriptionController.text);    refreshJournals();
+        description: descriptionController.text);
+    setState(() {
+      refreshJournals();
+    });
   }
 
   void showForm({int? id}) async {
     if (id != null) {
       final exitistingJournal =
           journal.firstWhere((element) => element['id'] == id);
-          print(exitistingJournal['title']);
-      textController = exitistingJournal['title'];
-      descriptionController = exitistingJournal['description'];
+
+      textController.text = exitistingJournal['title'];
+      descriptionController.text = exitistingJournal['description'];
     }
     showModalBottomSheet(
       context: context,
@@ -67,7 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 10,
             ),
             TextField(
-              controller: descriptionController,textInputAction: TextInputAction.done,
+              controller: descriptionController,
+              textInputAction: TextInputAction.done,
               decoration: const InputDecoration(hintText: "Description"),
             ),
             const SizedBox(
@@ -75,12 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                id == null ? await addItem() : await updatItem(id: 1);
+                id == null ? await addItem() : await updatItem(id: id);
                 textController.clear();
                 descriptionController.clear();
-    setState(() {
-      refreshJournals();
-  });
+                setState(() {
+                  refreshJournals();
+                });
                 Navigator.pop(context);
               },
               child: Center(
@@ -102,12 +106,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-   initState()  {
-  setState(()  {
- refreshJournals();
-  });
+  initState() {
+    setState(() {
+      refreshJournals();
+    });
     super.initState();
-
   }
 
   @override
@@ -119,49 +122,56 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         backgroundColor: Colors.purple,
       ),
-      body:RefreshIndicator(
-       displacement: 250,
-          backgroundColor: Colors.yellow,
-          color: Colors.red,
-          strokeWidth: 3,
-          triggerMode: RefreshIndicatorTriggerMode.onEdge,
-          onRefresh: () async {
-            await Future.delayed(const Duration(milliseconds: 1500));
+      body: RefreshIndicator(
+        displacement: 250,
+        backgroundColor: Colors.yellow,
+        color: Colors.red,
+        strokeWidth: 3,
+        triggerMode: RefreshIndicatorTriggerMode.onEdge,
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 1500));
 
-    setState(() {
-      refreshJournals();
-  });
-          },child: ListView.builder(
-        
-               itemCount: journal.length,
-               itemBuilder: (contextcontext, index) {
-                 return Card(
-                   color: Colors.orange[200],
-                   margin: const EdgeInsets.all(15),
-                   child: ListTile(
-                     title: Text(journal[index]['title']),
-                     subtitle: Text(journal[index]['title']),
-                     trailing:   IconButton(icon:const Icon(Icons.delete),onPressed: () {
-                           setState(() {
-                             SqlHelper.deleteItem(id: journal[index]['id']);
-                           });
-                         }),
-                           leading:   IconButton(icon:const Icon(Icons.edit),
-                           onPressed: () {
-                     
-                   setState(() {  print("edit button pressed");
-                          showForm(id: journal[index]['id']); 
-                   });
-                   
-                         }), 
-                   ),
-                 );
-               }),
+          setState(() {
+            refreshJournals();
+          });
+        },
+        child: ListView.builder(
+            itemCount: journal.length,
+            itemBuilder: (contextcontext, index) {
+              return Card(
+                color: Colors.orange[200],
+                margin: const EdgeInsets.all(15),
+                child: ListTile(
+                  title: Text(journal[index]['title']),
+                  subtitle: Column(
+                    children: [
+                      Text("${journal[index]['description']}"),
+                      Text("${journal[index]['created_at']}"),
+                    ],
+                  ),
+                  trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        SqlHelper.deleteItem(id: journal[index]['id']);
+                        setState(() {
+                          refreshJournals();
+                        });
+                      }),
+                  leading: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        setState(() {
+                          print("edit button pressed");
+                          showForm(id: journal[index]['id']);
+                        });
+                      }),
+                ),
+              );
+            }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showForm();
-          
         },
         backgroundColor: Colors.purple,
         child: const Icon(Icons.add),
