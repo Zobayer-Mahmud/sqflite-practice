@@ -36,13 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
     await SqlHelper.updateItem(
         id: id,
         title: textController.text,
-        description: descriptionController.text);
+        description: descriptionController.text);    refreshJournals();
   }
 
   void showForm({int? id}) async {
     if (id != null) {
       final exitistingJournal =
           journal.firstWhere((element) => element['id'] == id);
+          print(exitistingJournal['title']);
       textController = exitistingJournal['title'];
       descriptionController = exitistingJournal['description'];
     }
@@ -59,13 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             TextField(
               controller: textController,
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(hintText: "Text"),
             ),
             const SizedBox(
               height: 10,
             ),
             TextField(
-              controller: descriptionController,
+              controller: descriptionController,textInputAction: TextInputAction.done,
               decoration: const InputDecoration(hintText: "Description"),
             ),
             const SizedBox(
@@ -144,10 +146,13 @@ class _HomeScreenState extends State<HomeScreen> {
                              SqlHelper.deleteItem(id: journal[index]['id']);
                            });
                          }),
-                           leading:   IconButton(icon:const Icon(Icons.edit),onPressed: () {
-                           setState(() {
-                           showForm(id: journal[index]['id']);
-                           });
+                           leading:   IconButton(icon:const Icon(Icons.edit),
+                           onPressed: () {
+                     
+                   setState(() {  print("edit button pressed");
+                          showForm(id: journal[index]['id']); 
+                   });
+                   
                          }), 
                    ),
                  );
