@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
 class SqlHelper {
-  static Future<void> createTables(sql.Database database) async {
+  static Future<void> createTables(sql.Database database,{String? tableName}) async {
     await database.execute(
-        """CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        """CREATE TABLE ${tableName??'items'}(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   title TEXT,
   description TEXT,
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)""");
