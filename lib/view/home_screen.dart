@@ -1,7 +1,7 @@
-import 'dart:convert';
+
 
 import 'package:flutter/material.dart';
-import 'package:sqflite_practice/controller/home_provider.dart';
+
 import 'package:sqflite_practice/helper/sqfhelper.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,9 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
     await SqlHelper.createItems(
         title: textController.text, description: descriptionController.text);
     refreshJournals();
+  }  Future<void> deleteItem({required int id}) async {
+    await SqlHelper.deleteItem(id: id);
+setState(() {
+  refreshJournals();
+});
   }
 
-  Future<void> updatItem({required int id}) async {
+  Future<void> updateItem({required int id}) async {
     await SqlHelper.updateItem(
         id: id,
         title: textController.text,
@@ -79,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                id == null ? await addItem() : await updatItem(id: id);
+                id == null ? await addItem() : await updateItem(id: id);
                 textController.clear();
                 descriptionController.clear();
                 setState(() {
@@ -152,10 +157,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   trailing: IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () {
-                        SqlHelper.deleteItem(id: journal[index]['id']);
-                        setState(() {
-                          refreshJournals();
-                        });
+deleteItem(id: journal[index]['id']);
+
+
                       }),
                   leading: IconButton(
                       icon: const Icon(Icons.edit),

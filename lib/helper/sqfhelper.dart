@@ -4,18 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
 class SqlHelper {
-  static Future<void> createTables(sql.Database database,
-      {String? tableName}) async {
+  static Future<void> createTables(sql.Database database) async {
     await database.execute(
-        """CREATE TABLE ${tableName ?? 'items'}(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        """CREATE TABLE items (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   title TEXT,
   description TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)""");
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""");
   }
 
   static Future<sql.Database> db() async {
-    return sql.openDatabase('local.db', version: 1,
+    return sql.openDatabase('new_database1.db', version: 1,
         onCreate: (sql.Database database, int version) async {
       print("Creating a table");
       await createTables(database);
